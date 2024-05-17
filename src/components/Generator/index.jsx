@@ -22,6 +22,12 @@ const Generator = () => {
     for (let i = 0; i < wordLength - 1; i++) {
       const currentCharacter = word[i]
       const nextCharacter = word[i + 1]
+      // we have to be careful in special cases: __X and Y_X
+      let nextNextCharacter
+      if (i < wordLength - 2) {
+        nextNextCharacter = word[i + 2]
+      }
+
       if (currentCharacter) {
         if (nextCharacter) {
           continue;
@@ -44,10 +50,27 @@ const Generator = () => {
             console.error(`Did not find bigram 1. pos:${i}, word:${word.join("")}`)
           }
         } else {
-          // no restriction
-          const bigram = getRandomBigram(bigrams, i + 1)
-          word[i] = bigram[0]
-          word[i + 1] = bigram[1]
+          if (nextNextCharacter) {
+            // we are have __X -> generate bigram ending with X and use this to generate additional one
+            const randomNextBigram = getBigram(bigrams, nextNextCharacter,  i + 2, 1);
+            if (randomNextBigram) {
+              const randomBigram = getBigram(bigrams, randomNextBigram[0],  i + 1, 1);
+              if (randomBigram) {
+                word[i] = randomBigram[0];
+                word[i + 1] = randomNextBigram[0];
+                i++ // we filled position so advance to next one
+              } else {
+                console.error(`Did not find bigram pos:${i}, word:${word.join("")}`)
+              }
+            } else {
+              console.error(`Did not find nextBigram pos:${i}, word:${word.join("")}`)
+            }
+          } else {
+            // no restriction
+            const bigram = getRandomBigram(bigrams, i + 1)
+            word[i] = bigram[0]
+            word[i + 1] = bigram[1]
+          }
         }
       }
     }
