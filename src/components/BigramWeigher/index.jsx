@@ -40,6 +40,42 @@ const getRandomBigram = (bigrams, position) => {
   return validBigrams[randomIndex].bigram
 }
 
-export {getBigram, getRandomBigram}
+const getY_X = (bigrams, left, right, position) => {
+  const validLeftBigrams = bigrams.filter(
+    (bigram) =>
+      bigram &&
+      bigram.bigram[0] === left && 
+      bigram.sum_log_freq_pos &&
+      bigram.sum_log_freq_pos[position.toString()]
+  );
+  if (validLeftBigrams.length === 0) {
+    console.error(`no Y_X bigram selected '${left}_${right}' on position ${position} - couldn't found bigram from left`)
+    return null;
+  }
+
+  const validRightBigrams = bigrams.filter(
+    (bigram) =>
+      bigram &&
+      bigram.bigram[1] === right && 
+      bigram.sum_log_freq_pos &&
+      bigram.sum_log_freq_pos[position.toString()]
+  );
+  if (validRightBigrams.length === 0) {
+    console.error(`no Y_X bigram selected '${left}_${right}' on position ${position} - couldn't found bigram from right`)
+    return null;
+  }
+
+  // find intersectin of the two sets
+  const validBigrams = validLeftBigrams.filter(lValue => validRightBigrams.filter(rValue => rValue.bigram[0] == lValue.bigram[1]));
+  if (validBigrams.length === 0) {
+    console.error(`no Y_X bigram selected '${left}_${right}' on position ${position} - couldn't intersection`)
+    return null;
+  }
+
+  const randomIndex = Math.floor(Math.random() * validBigrams.length)
+  return validBigrams[randomIndex].bigram[1]
+}
+
+export {getBigram, getRandomBigram, getY_X}
 
 export default getBigram;

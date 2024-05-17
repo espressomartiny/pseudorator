@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import OutputDisplay from "../OutputDisplay";
 import InputForm from "../InputForm";
-import {getBigram, getRandomBigram} from "../BigramWeigher";
+import {getBigram, getRandomBigram, getY_X} from "../BigramWeigher";
 import DataLoader from "../DataLoader";
 import ProbabilityCalculator from "../ProbabilityCalculator";
 
@@ -32,12 +32,24 @@ const Generator = () => {
         if (nextCharacter) {
           continue;
         }
-        // next position is empty -> find suitable candidate
-        const randomBigram = getBigram(bigrams, currentCharacter,  i + 1, 0);
-        if (randomBigram) {
-          word[i + 1] = randomBigram[1];
+
+        // nextCharaccter is empty
+        if (nextNextCharacter) {
+          // we have Y_X
+          const missingCharacter = getY_X(bigrams, currentCharacter, nextNextCharacter,  i + 1);
+          if (missingCharacter) {
+            word[i + 1] = missingCharacter;
+          } else {
+            console.error(`Did not find character suitable for X_Y. pos:${i}, word:${word.join("")}`)
+          }
         } else {
-          console.error(`Did not find bigram 0. pos:${i}, word:${word.join("")}`)
+          // next position is empty -> find suitable candidate
+          const randomBigram = getBigram(bigrams, currentCharacter,  i + 1, 0);
+          if (randomBigram) {
+            word[i + 1] = randomBigram[1];
+          } else {
+            console.error(`Did not find bigram 0. pos:${i}, word:${word.join("")}`)
+          }
         }
       } else {
         // current position is empty
@@ -51,7 +63,7 @@ const Generator = () => {
           }
         } else {
           if (nextNextCharacter) {
-            // we are have __X -> generate bigram ending with X and use this to generate additional one
+            // we have __X -> generate bigram ending with X and use this to generate additional one
             const randomNextBigram = getBigram(bigrams, nextNextCharacter,  i + 2, 1);
             if (randomNextBigram) {
               const randomBigram = getBigram(bigrams, randomNextBigram[0],  i + 1, 1);
