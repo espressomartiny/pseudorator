@@ -34,7 +34,7 @@ The method for calculating phonotactic probability is based on the approach used
 
 If you use this application in your research or for other purposes, please cite both the application and the primary article:
 
-- **Vokáčová, M.** (2024): Pseudoword Generator for Czech (Version #.#) [Source code] URL
+- **Vokáčová, M.** (2024): Pseudorator: Pseudoword Generator for Czech (Version 1.0.1) [Computer software]. https://taaltool.github.io/pseudorator/
 - **Čechová, P., Cilibrasi, L., Henyš, J., & Čecho, J.** (2023). Introducing a phonotactic probability calculator for Czech. *Naše Řeč*, 106(1), 72–83.
 
 
